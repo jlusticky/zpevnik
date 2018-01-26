@@ -1,0 +1,139 @@
+\documentclass{article}
+
+\usepackage{fontspec}
+\usepackage[czech,slovak,english]{babel}
+\usepackage[top=40pt,left=10pt,bottom=40pt,right=10pt,margin=20pt,landscape,a4paper]{geometry}
+\usepackage{multicol}                       % multiple column support
+\usepackage{guitar}                         % chords above the words
+\usepackage{gchords}                        % chord diagrams
+\usepackage{verbatim}                       % support for comment and verbatim
+\usepackage{graphicx}                       % support for images
+\usepackage[hidelinks]{hyperref}            % hyperlink support
+\usepackage{etoolbox}                       % conditional statement support
+\usepackage{tikz}
+
+% Set variable commands
+\newcommand{\SongVar}{}
+\newcommand{\AuthorVar}{}
+\newcommand{\YoutubeVar}{}
+\newcommand{\CapoVar}{}
+\newcommand{\TutorialVar}{}
+
+\newcommand{\Song}[1]{\renewcommand{\SongVar}{#1}}
+\newcommand{\Author}[1]{\renewcommand{\AuthorVar}{#1}}
+\newcommand{\Youtube}[1]{\renewcommand{\YoutubeVar}{#1}}
+\newcommand{\Capo}[1]{\renewcommand{\CapoVar}{#1}}
+\newcommand{\Tutorial}[1]{\renewcommand{\TutorialVar}{#1}}
+
+\newcommand{\resetVars}{\Song{}\Author{}\Youtube{}\Capo{}\Tutorial{}}
+
+% Header parts
+\newcommand{\song}[1] {\mbox{\Large\textsf{#1}}}
+\newcommand{\autor}[1] {\mbox{\large\textsf{#1}}}
+\newcommand{\youtube}[1] {\href{#1}{\raisebox{-2pt}{\includegraphics[width=0.025\textwidth]{images/youtube_icon.jpg}}}}
+\newcommand{\tutorial}[1] {\href{#1}{\raisebox{-5pt}{\includegraphics[width=0.025\textwidth]{images/dark.png}}}}
+\newcommand{\capo}[1] {\fbox{\footnotesize{\textsc{\textbf{Capo #1}}}}}
+\newcommand{\shiftright}{\hfill}
+
+% Displays each part of the header only if it is defined
+\newcommand{\MakeHeader}{%
+\ifdefstring{\SongVar}{}{}{\song{\SongVar}}%
+\ifdefstring{\YoutubeVar}{}{\ifdefstring{\TutorialVar}{}{}{\vspace{-4pt}}}{\ifdefstring{\TutorialVar}{}{\vspace{-2pt}}{\vspace{-5pt}}}\hspace{0.1pt}%
+\ifdefstring{\TutorialVar}{}{}{\tutorial{\TutorialVar}}%
+\shiftright%
+\ifdefstring{\YoutubeVar}{}{}{\youtube{\YoutubeVar}}
+\ifdefstring{\YoutubeVar}{}{\ifdefstring{\TutorialVar}{}{}{\vspace{-1pt}}}{\ifdefstring{\TutorialVar}{}{\vspace{0pt}}{\vspace{-2pt}}}%
+
+\ifdefstring{\AuthorVar}{}{}{\autor{\AuthorVar}}%
+\shiftright%
+\ifdefstring{\CapoVar}{}{}{\capo{\CapoVar}}%
+}
+
+% Other commands
+\newcommand{\C}[2] {\textbf{\guitarChord{#1}{\textnormal{#2}}}}
+\newcommand{\Lyrics}{\flushleft\normalsize}
+\newcommand{\Tab}{\small}
+\newcommand{\Continue}{\par \columnbreak ~\\ \vspace{24.5pt}}
+\newcommand{\Continuechords}{\par \columnbreak ~\\ \vspace{18pt}}
+\newcommand{\Next}{\par \columnbreak}
+
+% Chord diagrams
+\newcommand{\Asusfour}{\chord{t}{x,o,p2,p2,p3,o}{Asus4}}
+\newcommand{\Dsustwo}{\chord{t}{x,x,o,p2,p3,o}{Dsus2}}
+\newcommand{\Esusfour}{\chord{t}{o,p2,p2,p2,o,o}{Esus4}}
+\newcommand{\Aseven}{\chord{t}{x,o,p2,o,p2,o}{A7}}
+\newcommand{\Bmseven}{\chord{t}{x,p2,o,p2,o,p2}{Bm7}}
+\newcommand{\Gseven}{\chord{t}{p3,p2,o,o,o,p1}{G7}}
+\newcommand{\Gfive}{\chord{t}{p3,p5,p5,x,x,x}{G5}}
+\newcommand{\CaddG}{\chord{t}{x,p3,p2,o,p1,p3}{CaddG}}
+\newcommand{\Gmajseven}{\chord{t}{x,x,o,o,p3,p2}{Gmaj7}}
+\newcommand{\Emajnine}{\chord{t}{x,p2,p2,p4,p4,p2}{Emaj9}}
+\newcommand{\Emsix}{\chord{t}{o,p2,p2,x,p2,x}{Em6}}
+\newcommand{\EmslashD}{\chord{t}{x,x,o,o,o,o}{Em/D}}
+\newcommand{\EmslashDsharp}{\chord{t}{x,x,p1,o,o,o}{Em/D\#}}
+\newcommand{\Dmsix}{\chord{t}{x,x,o,p2,o,p1}{Dm6}}
+\newcommand{\GslashB}{\chord{t}{x,p2,x,o,p3,p3}{G/B}}
+\newcommand{\Eflat}{\chord{6t}{x,o,p2,p2,p2,o}{E\guitarFlat}}
+\newcommand{\Cnine}{\chord{t}{x,p3,p2,o,p3,p3}{Cadd9}}
+
+% Chord strumming pattern
+\newcounter{x}
+
+\newcommand{\StrummingStart}{\setcounter{x}{0}\begin{center}\hspace{-0.7cm}\begin{tikzpicture}[scale=0.05]}
+
+\newcommand{\StrummingEnd}{
+\addtocounter{x}{-8};
+\draw [very thick] (-2,15) -- (\value{x},15);
+\draw [very thick] (-2,-2) -- (\value{x},-2);
+\end{tikzpicture}\end{center}}
+
+\newcommand{\Up}[1][up]{
+\draw [thick, ->] (\value{x},0) -- (\value{x},13);
+\node [above] at (\value{x},14){#1};
+\addtocounter{x}{10};}
+
+\newcommand{\Down}[1][down]{\draw [thick, ->] (\value{x},13) -- (\value{x},0);
+\node [below] at (\value{x},-1){#1};
+\addtocounter{x}{10};}
+
+\newcommand{\UpMiss}{
+\draw [dashed, thick, ->] (\value{x},0) -- (\value{x},13);
+\addtocounter{x}{10};}
+
+\newcommand{\DownMiss}{\draw [dashed, thick, ->] (\value{x},13) -- (\value{x},0);
+\addtocounter{x}{10};}
+
+\newcommand{\UpHalf}[1][up]{
+\draw [thick, ->] (\value{x},6) -- (\value{x},13);
+\node [above] at (\value{x},14){#1};
+\addtocounter{x}{10};}
+
+\newcommand{\DownHalf}[1][down]{\draw [thick, ->] (\value{x},6) -- (\value{x},0);
+\node [below] at (\value{x},-1){#1};
+\addtocounter{x}{10};}
+
+\newcommand{\UpStress}[1][up]{
+\draw [ultra thick, ->] (\value{x},0) -- (\value{x},13);
+\node [above] at (\value{x},14){\textbf{#1}};
+\addtocounter{x}{10};}
+
+\newcommand{\DownStress}[1][down]{\draw [ultra thick, ->] (\value{x},13) -- (\value{x},0);
+\node [below] at (\value{x},-1){\textbf{#1}};
+\addtocounter{x}{10};}
+
+
+\newcommand{\Time}[2]{\node [above] at (-5,10){#1};
+\node at (-5,9){#2};}
+
+\begin{document}%
+\begin{multicols*}{4}%
+\begin{guitar}%
+\hfuzz=10000pt %supress overflow warnings
+\raggedcolumns
+% Page 1
+\input{songs/Malovani.tex}
+\input{songs/Silny_refren.tex}
+%
+\end{guitar}
+\end{multicols*}
+\end{document}
